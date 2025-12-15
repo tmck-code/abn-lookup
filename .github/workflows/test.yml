@@ -15,4 +15,4 @@ jobs:
     - name: Pull image from ghcr.io
       run: docker pull ghcr.io/tmck-code/abn-lookup:latest
     - name: Run tests
-      run: docker run --rm -v "$PWD":/app ghcr.io/tmck-code/abn-lookup:latest pytest -vv test/
+      run: docker run --rm -v "$PWD":/app ghcr.io/tmck-code/abn-lookup:latest pytest -vv tests/
