@@ -18,9 +18,9 @@ This library provides a Python interface to the [Australian Business Register (A
       - [SearchByNameAdvanced (docs)](#searchbynameadvanced-docs)
       - [SearchByPostcode (docs)](#searchbypostcode-docs)
       - [SearchByABNStatus (docs)](#searchbyabnstatus-docs)
-      - [SearchByCharity (docs)](#searchbycharity-docs)
-      - [SearchByRegistrationEvent (docs)](#searchbyregistrationevent-docs)
       - [SearchByUpdateEvent (docs)](#searchbyupdateevent-docs)
+      - [SearchByRegistrationEvent (docs)](#searchbyregistrationevent-docs)
+      - [SearchByCharity (docs)](#searchbycharity-docs)
   - [Development](#development)
     - [Testing](#testing)
       - [Docker](#docker)
@@ -210,23 +210,34 @@ for result in results:
 
 **Parameters:**
 - `postcode` (str, required): The postcode to search for
-- `state` (str, optional): Filter by state
-- `activeABNsOnly` (str, optional): 'Y' to return only active ABNs
-- `currentGSTRegistrationOnly` (str, optional): 'Y' to return only GST registered entities
-- `entityTypeCode` (str, optional): Filter by entity type code
-- `concessionTypeCode` (str, optional): Filter by concession type code
 
 #### SearchByABNStatus ([docs](https://abr.business.gov.au/Documentation/WebServiceMethods#filters))
 *Search for entities by ABN status.*
 
 **Parameters:**
-- `entityStatusCode` (str, required): Entity status code
 - `postcode` (str, optional): Filter by postcode
-- `state` (str, optional): Filter by state
 - `activeABNsOnly` (str, optional): 'Y' to return only active ABNs
 - `currentGSTRegistrationOnly` (str, optional): 'Y' to return only GST registered entities
 - `entityTypeCode` (str, optional): Filter by entity type code
-- `concessionTypeCode` (str, optional): Filter by concession type code
+
+#### SearchByUpdateEvent ([docs](https://abr.business.gov.au/Documentation/WebServiceMethods#filters))
+*Search for entities by update event.*
+
+**Parameters:**
+- `updatedate` (str, required): Update date (YYYY-MM-DD format)
+- `postcode` (str, optional): Filter by postcode
+- `state` (str, optional): Filter by state
+- `entityTypeCode` (str, optional): Filter by entity type code
+
+#### SearchByRegistrationEvent ([docs](https://abr.business.gov.au/Documentation/WebServiceMethods#filters))
+*Search for entities by registration event.*
+
+**Parameters:**
+- `month` (str, required): Month (1-12)
+- `year` (str, required): Year (YYYY format)
+- `postcode` (str, optional): Filter by postcode
+- `state` (str, optional): Filter by state
+- `entityTypeCode` (str, optional): Filter by entity type code
 
 #### SearchByCharity ([docs](https://abr.business.gov.au/Documentation/WebServiceMethods#filters))
 *Search for charities.*
@@ -234,37 +245,7 @@ for result in results:
 **Parameters:**
 - `postcode` (str, optional): Filter by postcode
 - `state` (str, optional): Filter by state
-- `activeABNsOnly` (str, optional): 'Y' to return only active ABNs
-- `currentGSTRegistrationOnly` (str, optional): 'Y' to return only GST registered entities
-- `entityTypeCode` (str, optional): Filter by entity type code
-- `concessionTypeCode` (str, optional): Filter by concession type code
-
-#### SearchByRegistrationEvent ([docs](https://abr.business.gov.au/Documentation/WebServiceMethods#filters))
-*Search for entities by registration event.*
-
-**Parameters:**
-- `eventType` (str, required): Event type
-- `fromDate` (str, required): From date (YYYY-MM-DD format)
-- `toDate` (str, required): To date (YYYY-MM-DD format)
-- `postcode` (str, optional): Filter by postcode
-- `state` (str, optional): Filter by state
-- `activeABNsOnly` (str, optional): 'Y' to return only active ABNs
-- `currentGSTRegistrationOnly` (str, optional): 'Y' to return only GST registered entities
-- `entityTypeCode` (str, optional): Filter by entity type code
-- `concessionTypeCode` (str, optional): Filter by concession type code
-
-#### SearchByUpdateEvent ([docs](https://abr.business.gov.au/Documentation/WebServiceMethods#filters))
-*Search for entities by update event.*
-
-**Parameters:**
-- `eventType` (str, required): Event type
-- `fromDate` (str, required): From date (YYYY-MM-DD format)
-- `toDate` (str, required): To date (YYYY-MM-DD format)
-- `postcode` (str, optional): Filter by postcode
-- `state` (str, optional): Filter by state
-- `activeABNsOnly` (str, optional): 'Y' to return only active ABNs
-- `currentGSTRegistrationOnly` (str, optional): 'Y' to return only GST registered entities
-- `entityTypeCode` (str, optional): Filter by entity type code
+- `charityTypeCode` (str, optional): Filter by charity type code
 - `concessionTypeCode` (str, optional): Filter by concession type code
 
 ---
