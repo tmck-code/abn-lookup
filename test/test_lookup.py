@@ -205,20 +205,6 @@ def test_state_flags_generation(client, multiple_results_dict, requests_mock):
     assert 'QLD=N' in url
 
 
-def test_empty_params_filtered(client, multiple_results_dict, requests_mock):
-    requests_mock.get(
-        'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/ABRSearchByCharity',
-        text=xmltodict.unparse(multiple_results_dict)
-    )
-    
-    list(client.search_by_charity(postcode='', state='NSW'))
-    
-    url = requests_mock.last_request.url
-    # postcode should not be in params since it's empty
-    assert 'postcode=' not in url
-    assert 'state=NSW' in url
-
-
 def test_http_error_handling(client, requests_mock):
     requests_mock.get(
         'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/ABRSearchByABN',

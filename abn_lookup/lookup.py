@@ -31,10 +31,6 @@ class ABNLookupClient:
         'Generate state flags for API requests.'
         return {k: 'Y' if k == state else 'N' for k in STATES}
 
-    def _filter_params(self, params: dict) -> dict:
-        'Filter out empty parameters from a dictionary.'
-        return {k: v for k, v in params.items() if v}
-
     def _iter_search_results(self, result: dict, limit: int = None) -> Generator[dict, None, None]:
         'Generator that yields individual search results from a name search response.'
         yield from islice(
@@ -87,9 +83,9 @@ class ABNLookupClient:
             'concessionTypeCode': concessionTypeCode
         }
         yield from self._iter_search_results(
-                self._request(
+            self._request(
                 'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/ABRSearchByABNStatus',
-                self._filter_params(params)
+                params,
             )
         )
 
@@ -107,9 +103,9 @@ class ABNLookupClient:
             'concessionTypeCode': concessionTypeCode
         }
         yield from self._iter_search_results(
-                self._request(
+            self._request(
                 'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/ABRSearchByCharity',
-                self._filter_params(params)
+                params,
             )
         )
 
@@ -130,9 +126,9 @@ class ABNLookupClient:
             'concessionTypeCode': concessionTypeCode
         }
         yield from self._iter_search_results(
-                self._request(
+            self._request(
                 'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/ABRSearchByRegistrationEvent',
-                self._filter_params(params)
+                params,
             )
         )
 
@@ -155,7 +151,7 @@ class ABNLookupClient:
         yield from self._iter_search_results(
             self._request(
                 'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/ABRSearchByUpdateEvent',
-                self._filter_params(params)
+                params,
             )
         )
 
@@ -175,7 +171,7 @@ class ABNLookupClient:
         yield from self._iter_search_results(
             self._request(
                 'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/ABRSearchByNameSimpleProtocol',
-                self._filter_params(params)
+                params,
             )
         )
 
@@ -193,9 +189,9 @@ class ABNLookupClient:
             'concessionTypeCode': concessionTypeCode
         }
         yield from self._iter_search_results(
-                self._request(
+            self._request(
                 'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/ABRSearchByPostcode',
-                self._filter_params(params)
+                params,
             )
         )
 
@@ -219,7 +215,7 @@ class ABNLookupClient:
         yield from self._iter_search_results(
             self._request(
                 'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/ABRSearchByNameAdvancedSimpleProtocol',
-                self._filter_params(params)
+                params,
             )
         )
 
