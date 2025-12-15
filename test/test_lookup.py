@@ -96,24 +96,47 @@ def test_search_by_name(client, multiple_results_dict, requests_mock):
     assert 'NSW=Y' in requests_mock.last_request.url
 
 
-def test_search_by_abn_status(client, multiple_results_dict, requests_mock):
+def test_search_by_abn_status(client, requests_mock):
+    mock_response = {
+        'ABRPayloadSearchResults': {
+            'response': {
+                'abnList': {
+                    'abn': [
+                        {'value': '51824753556'},
+                        {'value': '12345678901'}
+                    ]
+                }
+            }
+        }
+    }
     requests_mock.get(
-        'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/ABRSearchByABNStatus',
-        text=xmltodict.unparse(multiple_results_dict)
+        'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/SearchByABNStatus',
+        text=xmltodict.unparse(mock_response)
     )
     
-    results = list(client.search_by_abn_status('ACT', state='NSW', postcode='2000'))
+    results = list(client.search_by_abn_status(postcode='2000', activeABNsOnly='Y'))
     
     assert len(results) == 2
-    assert 'entityStatusCode=ACT' in requests_mock.last_request.url
-    assert 'state=NSW' in requests_mock.last_request.url
     assert 'postcode=2000' in requests_mock.last_request.url
+    assert 'activeABNsOnly=Y' in requests_mock.last_request.url
 
 
-def test_search_by_charity(client, multiple_results_dict, requests_mock):
+def test_search_by_charity(client, requests_mock):
+    mock_response = {
+        'ABRPayloadSearchResults': {
+            'response': {
+                'abnList': {
+                    'abn': [
+                        {'value': '51824753556'},
+                        {'value': '12345678901'}
+                    ]
+                }
+            }
+        }
+    }
     requests_mock.get(
-        'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/ABRSearchByCharity',
-        text=xmltodict.unparse(multiple_results_dict)
+        'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/SearchByCharity',
+        text=xmltodict.unparse(mock_response)
     )
     
     results = list(client.search_by_charity(postcode='2000', state='NSW'))
@@ -123,50 +146,85 @@ def test_search_by_charity(client, multiple_results_dict, requests_mock):
     assert 'state=NSW' in requests_mock.last_request.url
 
 
-def test_search_by_registration_event(client, multiple_results_dict, requests_mock):
+def test_search_by_registration_event(client, requests_mock):
+    mock_response = {
+        'ABRPayloadSearchResults': {
+            'response': {
+                'abnList': {
+                    'abn': [
+                        {'value': '51824753556'},
+                        {'value': '12345678901'}
+                    ]
+                }
+            }
+        }
+    }
     requests_mock.get(
-        'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/ABRSearchByRegistrationEvent',
-        text=xmltodict.unparse(multiple_results_dict)
+        'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/SearchByRegistrationEvent',
+        text=xmltodict.unparse(mock_response)
     )
     
     results = list(client.search_by_registration_event(
-        'GST', '2020-01-01', '2020-12-31', state='VIC'
+        month='1', year='2020', state='VIC', postcode='3000'
     ))
     
     assert len(results) == 2
-    assert 'eventType=GST' in requests_mock.last_request.url
-    assert 'fromDate=2020-01-01' in requests_mock.last_request.url
-    assert 'toDate=2020-12-31' in requests_mock.last_request.url
-
-
-def test_search_by_update_event(client, multiple_results_dict, requests_mock):
-    requests_mock.get(
-        'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/ABRSearchByUpdateEvent',
-        text=xmltodict.unparse(multiple_results_dict)
-    )
-    
-    results = list(client.search_by_update_event(
-        'GST', '2020-01-01', '2020-12-31', postcode='3000'
-    ))
-    
-    assert len(results) == 2
-    assert 'eventType=GST' in requests_mock.last_request.url
-    assert 'fromDate=2020-01-01' in requests_mock.last_request.url
-    assert 'toDate=2020-12-31' in requests_mock.last_request.url
+    assert 'month=1' in requests_mock.last_request.url
+    assert 'year=2020' in requests_mock.last_request.url
+    assert 'state=VIC' in requests_mock.last_request.url
     assert 'postcode=3000' in requests_mock.last_request.url
 
 
-def test_search_by_postcode(client, multiple_results_dict, requests_mock):
+def test_search_by_update_event(client, requests_mock):
+    mock_response = {
+        'ABRPayloadSearchResults': {
+            'response': {
+                'abnList': {
+                    'abn': [
+                        {'value': '51824753556'},
+                        {'value': '12345678901'}
+                    ]
+                }
+            }
+        }
+    }
     requests_mock.get(
-        'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/ABRSearchByPostcode',
-        text=xmltodict.unparse(multiple_results_dict)
+        'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/SearchByUpdateEvent',
+        text=xmltodict.unparse(mock_response)
     )
     
-    results = list(client.search_by_postcode('2000', state='NSW'))
+    results = list(client.search_by_update_event(
+        updatedate='2020-01-01', postcode='3000', state='VIC'
+    ))
+    
+    assert len(results) == 2
+    assert 'updatedate=2020-01-01' in requests_mock.last_request.url
+    assert 'postcode=3000' in requests_mock.last_request.url
+    assert 'state=VIC' in requests_mock.last_request.url
+
+
+def test_search_by_postcode(client, requests_mock):
+    mock_response = {
+        'ABRPayloadSearchResults': {
+            'response': {
+                'abnList': {
+                    'abn': [
+                        {'value': '51824753556'},
+                        {'value': '12345678901'}
+                    ]
+                }
+            }
+        }
+    }
+    requests_mock.get(
+        'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/SearchByPostcode',
+        text=xmltodict.unparse(mock_response)
+    )
+    
+    results = list(client.search_by_postcode('2000'))
     
     assert len(results) == 2
     assert 'postcode=2000' in requests_mock.last_request.url
-    assert 'state=NSW' in requests_mock.last_request.url
 
 
 def test_search_by_name_advanced(client, multiple_results_dict, requests_mock):

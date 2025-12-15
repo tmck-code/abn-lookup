@@ -4,17 +4,16 @@ from argparse import ArgumentParser
 from dataclasses import dataclass
 from itertools import islice
 import os
-from typing import Generator
+from typing import Generator, Optional
 
 import requests
-from urllib.parse import urlencode
 
 import xmltodict
 
 from pp import pp
 
 STATES = ['NSW', 'ACT', 'VIC', 'QLD', 'SA', 'WA', 'TAS', 'NT']
-
+DEBUG = os.environ.get('DEBUG', '0') == '1'
 
 @dataclass
 class ABNLookupClient:
@@ -22,19 +21,25 @@ class ABNLookupClient:
 
     def _request(self, url: str, params: dict) -> dict:
         'Internal method to perform a GET request to the ABR XML Search API. Converts XML response to dict.'
+        if DEBUG:
+            pp.ppd({'url': url, 'params': params}, style=None)
         response = requests.get(url, params=params | {'authenticationGuid': self.authentication_guid})
         response.raise_for_status()
+        if DEBUG:
+            pp.ppd({'response': {'status_code': response.status_code, 'text': response.text}}, style=None)
         parsed = xmltodict.parse(response.text)
+        if DEBUG:
+            pp.ppd({'parsed': parsed}, style=None)
         return parsed
 
     def _state_flags(self, state: str) -> dict:
         'Generate state flags for API requests.'
         return {k: 'Y' if k == state else 'N' for k in STATES}
 
-    def _iter_search_results(self, result: dict, limit: int = None) -> Generator[dict, None, None]:
-        'Generator that yields individual search results from a name search response.'
+    def _iter_search_results(self, result: dict, result_list_key: str, record_key: str, limit: Optional[int] = None) -> Generator[dict, None, None]:
+        'Generator that yields individual search results from a search response.'
         yield from islice(
-            result.get('ABRPayloadSearchResults', {}).get('response', {}).get('searchResultsList', {}).get('searchResultsRecord', []),
+            result.get('ABRPayloadSearchResults', {}).get('response', {}).get(result_list_key, {}).get(record_key, []),
             limit
         )
 
@@ -68,28 +73,27 @@ class ABNLookupClient:
 
     # Multiple-result searches ------------------
 
-    def search_by_abn_status(self, entityStatusCode: str, postcode: str = '', state: str = '', activeABNsOnly: str = '', currentGSTRegistrationOnly: str = '', entityTypeCode: str = '', concessionTypeCode: str = '') -> Generator[dict, None, None]:
+    def search_by_abn_status(self, postcode: str = '', activeABNsOnly: str = '', currentGSTRegistrationOnly: str = '', entityTypeCode: str = '') -> Generator[dict, None, None]:
         '''
         Search for entities by ABN status.
         See: https://abr.business.gov.au/Documentation/WebServiceMethods#SearchwithFilters
         '''
         params = {
-            'entityStatusCode': entityStatusCode,
             'postcode': postcode,
-            'state': state,
             'activeABNsOnly': activeABNsOnly,
             'currentGSTRegistrationOnly': currentGSTRegistrationOnly,
             'entityTypeCode': entityTypeCode,
-            'concessionTypeCode': concessionTypeCode
         }
         yield from self._iter_search_results(
             self._request(
-                'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/ABRSearchByABNStatus',
+                'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/SearchByABNStatus',
                 params,
-            )
+            ),
+            result_list_key='abnList',
+            record_key='abn'
         )
 
-    def search_by_charity(self, postcode: str = '', state: str = '', activeABNsOnly: str = '', currentGSTRegistrationOnly: str = '', entityTypeCode: str = '', concessionTypeCode: str = '') -> Generator[dict, None, None]:
+    def search_by_charity(self, postcode: str = '', state: str = '', charityTypeCode: str = '', concessionTypeCode: str = '') -> Generator[dict, None, None]:
         '''
         Search for charities.
         See: https://abr.business.gov.au/Documentation/WebServiceMethods#SearchwithFilters
@@ -97,62 +101,57 @@ class ABNLookupClient:
         params = {
             'postcode': postcode,
             'state': state,
-            'activeABNsOnly': activeABNsOnly,
-            'currentGSTRegistrationOnly': currentGSTRegistrationOnly,
-            'entityTypeCode': entityTypeCode,
-            'concessionTypeCode': concessionTypeCode
+            'charityTypeCode': charityTypeCode,
+            'concessionTypeCode': concessionTypeCode,
         }
         yield from self._iter_search_results(
             self._request(
-                'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/ABRSearchByCharity',
+                'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/SearchByCharity',
                 params,
-            )
+            ),
+            result_list_key='abnList',
+            record_key='abn'
         )
 
-    def search_by_registration_event(self, eventType: str, fromDate: str, toDate: str, postcode: str = '', state: str = '', activeABNsOnly: str = '', currentGSTRegistrationOnly: str = '', entityTypeCode: str = '', concessionTypeCode: str = '') -> Generator[dict, None, None]:
+    def search_by_registration_event(self, month: str, year: str, postcode: str = '', state: str = '', entityTypeCode: str = '') -> Generator[dict, None, None]:
         '''
         Search for entities by registration event.
         See: https://abr.business.gov.au/Documentation/WebServiceMethods#SearchwithFilters
         '''
         params = {
-            'eventType': eventType,
-            'fromDate': fromDate,
-            'toDate': toDate,
             'postcode': postcode,
             'state': state,
-            'activeABNsOnly': activeABNsOnly,
-            'currentGSTRegistrationOnly': currentGSTRegistrationOnly,
             'entityTypeCode': entityTypeCode,
-            'concessionTypeCode': concessionTypeCode
+            'month': month,
+            'year': year,
         }
         yield from self._iter_search_results(
             self._request(
-                'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/ABRSearchByRegistrationEvent',
+                'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/SearchByRegistrationEvent',
                 params,
-            )
+            ),
+            result_list_key='abnList',
+            record_key='abn'
         )
 
-    def search_by_update_event(self, eventType: str, fromDate: str, toDate: str, postcode: str = '', state: str = '', activeABNsOnly: str = '', currentGSTRegistrationOnly: str = '', entityTypeCode: str = '', concessionTypeCode: str = '') -> Generator[dict, None, None]:
+    def search_by_update_event(self, updatedate: str, postcode: str = '', state: str = '', entityTypeCode: str = '') -> Generator[dict, None, None]:
         '''
         Search for entities by update event.
         See: https://abr.business.gov.au/Documentation/WebServiceMethods#SearchwithFilters
         '''
         params = {
-            'eventType': eventType,
-            'fromDate': fromDate,
-            'toDate': toDate,
             'postcode': postcode,
             'state': state,
-            'activeABNsOnly': activeABNsOnly,
-            'currentGSTRegistrationOnly': currentGSTRegistrationOnly,
             'entityTypeCode': entityTypeCode,
-            'concessionTypeCode': concessionTypeCode
+            'updatedate': updatedate,
         }
         yield from self._iter_search_results(
             self._request(
-                'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/ABRSearchByUpdateEvent',
+                'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/SearchByUpdateEvent',
                 params,
-            )
+            ),
+            result_list_key='abnList',
+            record_key='abn'
         )
 
     def search_by_name(self, name: str, postcode: str = '', legalName: str = '', businessName: str = '', tradingName: str = '', state: str = '') -> Generator[dict, None, None]:
@@ -172,27 +171,26 @@ class ABNLookupClient:
             self._request(
                 'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/ABRSearchByNameSimpleProtocol',
                 params,
-            )
+            ),
+            result_list_key='searchResultsList',
+            record_key='searchResultsRecord'
         )
 
-    def search_by_postcode(self, postcode: str, state: str = '', activeABNsOnly: str = '', currentGSTRegistrationOnly: str = '', entityTypeCode: str = '', concessionTypeCode: str = '') -> Generator[dict, None, None]:
+    def search_by_postcode(self, postcode: str) -> Generator[dict, None, None]:
         '''
         Search for entities by postcode.
         See: https://abr.business.gov.au/Documentation/WebServiceMethods#SearchwithFilters
         '''
         params = {
             'postcode': postcode,
-            'state': state,
-            'activeABNsOnly': activeABNsOnly,
-            'currentGSTRegistrationOnly': currentGSTRegistrationOnly,
-            'entityTypeCode': entityTypeCode,
-            'concessionTypeCode': concessionTypeCode
         }
         yield from self._iter_search_results(
             self._request(
-                'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/ABRSearchByPostcode',
+                'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/SearchByPostcode',
                 params,
-            )
+            ),
+            result_list_key='abnList',
+            record_key='abn'
         )
 
     def search_by_name_advanced(self, name: str, postcode: str = '', legalName: str = '', businessName: str = '', tradingName: str = '', state: str = '', searchWidth: str = '', minimumScore: int = 0, maxSearchResults: int = 0, activeABNsOnly: str = '') -> Generator[dict, None, None]:
@@ -216,50 +214,15 @@ class ABNLookupClient:
             self._request(
                 'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/ABRSearchByNameAdvancedSimpleProtocol',
                 params,
-            )
+            ),
+            result_list_key='searchResultsList',
+            record_key='searchResultsRecord'
         )
 
 
 def parse_args():
     parser = ArgumentParser(description='ABN Lookup Client')
     subparsers = parser.add_subparsers(dest='command', required=True)
-
-    # search_by_abn_status
-    parser_abn_status = subparsers.add_parser('abn-status', help='Search by ABN status')
-    parser_abn_status.add_argument('--entityStatusCode', type=str, required=True, help='Entity status code')
-    parser_abn_status.add_argument('--state', type=str, default='', choices=STATES, help='State to filter results by (optional)')
-    parser_abn_status.add_argument('--postcode', type=str, default='', help='Postcode (optional)')
-    parser_abn_status.add_argument('--entityTypeCode', type=str, default='', help='Entity type code (optional)')
-
-    # search_by_charity
-    parser_charity = subparsers.add_parser('charity', help='Search by charity')
-    parser_charity.add_argument('--state', type=str, default='', choices=STATES, help='State to filter results by (optional)')
-    parser_charity.add_argument('--postcode', type=str, default='', help='Postcode (optional)')
-    parser_charity.add_argument('--entityTypeCode', type=str, default='', help='Entity type code (optional)')
-
-    # search_by_registration_event
-    parser_reg_event = subparsers.add_parser('registration-event', help='Search by registration event')
-    parser_reg_event.add_argument('--eventType', type=str, required=True, help='Event type')
-    parser_reg_event.add_argument('--fromDate', type=str, required=True, help='From date (YYYY-MM-DD)')
-    parser_reg_event.add_argument('--toDate', type=str, required=True, help='To date (YYYY-MM-DD)')
-    parser_reg_event.add_argument('--state', type=str, default='', choices=STATES, help='State to filter results by (optional)')
-    parser_reg_event.add_argument('--postcode', type=str, default='', help='Postcode (optional)')
-    parser_reg_event.add_argument('--entityTypeCode', type=str, default='', help='Entity type code (optional)')
-
-    # search_by_update_event
-    parser_update_event = subparsers.add_parser('update-event', help='Search by update event')
-    parser_update_event.add_argument('--eventType', type=str, required=True, help='Event type')
-    parser_update_event.add_argument('--fromDate', type=str, required=True, help='From date (YYYY-MM-DD)')
-    parser_update_event.add_argument('--toDate', type=str, required=True, help='To date (YYYY-MM-DD)')
-    parser_update_event.add_argument('--state', type=str, default='', choices=STATES, help='State to filter results by (optional)')
-    parser_update_event.add_argument('--postcode', type=str, default='', help='Postcode (optional)')
-    parser_update_event.add_argument('--entityTypeCode', type=str, default='', help='Entity type code (optional)')
-
-    # search_by_name
-    parser_name = subparsers.add_parser('name', help='Search by name')
-    parser_name.add_argument('--name', type=str, required=True, help='Name to search for')
-    parser_name.add_argument('--state', type=str, required=True, choices=STATES, help='State to filter results by')
-    parser_name.add_argument('--limit', type=int, default=10, help='Maximum number of results to return')
 
     # search_by_abn
     parser_abn = subparsers.add_parser('abn', help='Search by ABN')
@@ -271,11 +234,11 @@ def parse_args():
     parser_asic.add_argument('--asic', type=str, required=True, help='ASIC number to search for')
     parser_asic.add_argument('--includeHistoricalDetails', type=str, default='N', choices=['Y', 'N'], help='Include historical details')
 
-    # search_by_postcode
-    parser_postcode = subparsers.add_parser('postcode', help='Search by postcode')
-    parser_postcode.add_argument('--postcode', type=str, required=True, help='Postcode to search for')
-    parser_postcode.add_argument('--entityTypeCode', type=str, default='', help='Entity type code (optional)')
-    parser_postcode.add_argument('--state', type=str, default='', choices=STATES, help='State to filter results by (optional)')
+    # search_by_name
+    parser_name = subparsers.add_parser('name', help='Search by name')
+    parser_name.add_argument('--name', type=str, required=True, help='Name to search for')
+    parser_name.add_argument('--state', type=str, required=True, choices=STATES, help='State to filter results by')
+    parser_name.add_argument('--limit', type=int, default=10, help='Maximum number of results to return')
 
     # search_by_name_advanced
     parser_name_adv = subparsers.add_parser('name-advanced', help='Advanced search by name')
@@ -284,6 +247,42 @@ def parse_args():
     parser_name_adv.add_argument('--tradingName', type=str, default='', help='Trading name (optional)')
     parser_name_adv.add_argument('--legalName', type=str, default='', help='Legal name (optional)')
     parser_name_adv.add_argument('--state', type=str, default='', choices=STATES, help='State to filter results by (optional)')
+
+    # filter searches ---------------------------
+
+    # search_by_postcode
+    parser_postcode = subparsers.add_parser('postcode', help='Search by postcode')
+    parser_postcode.add_argument('--postcode', type=str, required=True, help='Postcode to search for')
+
+    # search_by_abn_status
+    # ?postcode=string&activeABNsOnly=string&currentGSTRegistrationOnly=string&entityTypeCode=string
+    parser_abn_status = subparsers.add_parser('abn-status', help='Search by ABN status')
+    parser_abn_status.add_argument('--postcode', type=str, default='', help='Postcode (optional)')
+    parser_abn_status.add_argument('--activeABNsOnly', type=str, default='', help='Active ABNs only (optional)')
+    parser_abn_status.add_argument('--currentGSTRegistrationOnly', type=str, default='', help='Current GST registration only (optional)')
+    parser_abn_status.add_argument('--entityTypeCode', type=str, default='', help='Entity type code (optional)')
+
+    # search_by_update_event
+    parser_update_event = subparsers.add_parser('update-event', help='Search by update event')
+    parser_update_event.add_argument('--updatedate', type=str, required=True, help='Update date (YYYY-MM-DD format)')
+    parser_update_event.add_argument('--state', type=str, default='', choices=STATES, help='State to filter results by (optional)')
+    parser_update_event.add_argument('--postcode', type=str, default='', help='Postcode (optional)')
+    parser_update_event.add_argument('--entityTypeCode', type=str, default='', help='Entity type code (optional)')
+
+    # search_by_registration_event
+    parser_reg_event = subparsers.add_parser('registration-event', help='Search by registration event')
+    parser_reg_event.add_argument('--month', type=str, required=True, help='Month (1-12)')
+    parser_reg_event.add_argument('--year', type=str, required=True, help='Year (YYYY format)')
+    parser_reg_event.add_argument('--state', type=str, default='', choices=STATES, help='State to filter results by (optional)')
+    parser_reg_event.add_argument('--postcode', type=str, default='', help='Postcode (optional)')
+    parser_reg_event.add_argument('--entityTypeCode', type=str, default='', help='Entity type code (optional)')
+
+    # search_by_charity
+    parser_charity = subparsers.add_parser('charity', help='Search by charity')
+    parser_charity.add_argument('--state', type=str, default='', choices=STATES, help='State to filter results by (optional)')
+    parser_charity.add_argument('--postcode', type=str, default='', help='Postcode (optional)')
+    parser_charity.add_argument('--charityTypeCode', type=str, default='', help='Charity type code (optional)')
+    parser_charity.add_argument('--concessionTypeCode', type=str, default='', help='Concession type code (optional)')
 
     return vars(parser.parse_args())
 
