@@ -1,0 +1,17 @@
+[project]
+name = "abn-lookup"
+version = "0.1.0"
+description = "A python client to interact with ABN Lookup services"
+authors = [{name = "Tom McKeesick", email = "tmck01@gmail.com"}]
+license = "BSD-3-Clause"
+readme = "README.md"
+requires-python = ">=3.13.1"
+dependencies = [
+    "requests>=2.31.0",
+    "xmltodict>=0.13.0",
+    "pp @ git+https://github.com/tmck-code/pp@v0.2.2",
+]
+
+[project.urls]
+Homepage = "https://github.com/tmck-code/abn-lookup"
+Issues = "https://github.com/tmck-code/abn-lookup/issues"
