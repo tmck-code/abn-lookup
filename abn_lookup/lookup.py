@@ -51,7 +51,7 @@ class ABNLookupClient:
         See: https://abr.business.gov.au/Documentation/WebServiceMethods#SearchbyABN
         '''
         yield self._request(
-            'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/ABRSearchByABN',
+            'https://abr.business.gov.au/ABRXMLSearchRPC/ABRXMLSearch.asmx/ABRSearchByABN',
             {
                 'searchString': abn,
                 'includeHistoricalDetails': includeHistoricalDetails
@@ -64,7 +64,7 @@ class ABNLookupClient:
         See: https://abr.business.gov.au/Documentation/WebServiceMethods#SearchbyASICnumber
         '''
         yield self._request(
-            'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/ABRSearchByASIC',
+            'https://abr.business.gov.au/ABRXMLSearchRPC/ABRXMLSearch.asmx/ABRSearchByASIC',
             {
                 'searchString': asic,
                 'includeHistoricalDetails': includeHistoricalDetails
@@ -86,7 +86,7 @@ class ABNLookupClient:
         }
         yield from self._iter_search_results(
             self._request(
-                'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/SearchByABNStatus',
+                'https://abr.business.gov.au/ABRXMLSearchRPC/ABRXMLSearch.asmx/SearchByABNStatus',
                 params,
             ),
             result_list_key='abnList',
@@ -106,7 +106,7 @@ class ABNLookupClient:
         }
         yield from self._iter_search_results(
             self._request(
-                'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/SearchByCharity',
+                'https://abr.business.gov.au/ABRXMLSearchRPC/ABRXMLSearch.asmx/SearchByCharity',
                 params,
             ),
             result_list_key='abnList',
@@ -127,7 +127,7 @@ class ABNLookupClient:
         }
         yield from self._iter_search_results(
             self._request(
-                'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/SearchByRegistrationEvent',
+                'https://abr.business.gov.au/ABRXMLSearchRPC/ABRXMLSearch.asmx/SearchByRegistrationEvent',
                 params,
             ),
             result_list_key='abnList',
@@ -147,7 +147,7 @@ class ABNLookupClient:
         }
         yield from self._iter_search_results(
             self._request(
-                'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/SearchByUpdateEvent',
+                'https://abr.business.gov.au/ABRXMLSearchRPC/ABRXMLSearch.asmx/SearchByUpdateEvent',
                 params,
             ),
             result_list_key='abnList',
@@ -169,7 +169,7 @@ class ABNLookupClient:
         }
         yield from self._iter_search_results(
             self._request(
-                'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/ABRSearchByNameSimpleProtocol',
+                'https://abr.business.gov.au/ABRXMLSearchRPC/ABRXMLSearch.asmx/ABRSearchByNameSimpleProtocol',
                 params,
             ),
             result_list_key='searchResultsList',
@@ -186,7 +186,7 @@ class ABNLookupClient:
         }
         yield from self._iter_search_results(
             self._request(
-                'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/SearchByPostcode',
+                'https://abr.business.gov.au/ABRXMLSearchRPC/ABRXMLSearch.asmx/SearchByPostcode',
                 params,
             ),
             result_list_key='abnList',
@@ -212,7 +212,7 @@ class ABNLookupClient:
         }
         yield from self._iter_search_results(
             self._request(
-                'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/ABRSearchByNameAdvancedSimpleProtocol',
+                'https://abr.business.gov.au/ABRXMLSearchRPC/ABRXMLSearch.asmx/ABRSearchByNameAdvancedSimpleProtocol',
                 params,
             ),
             result_list_key='searchResultsList',

@@ -45,7 +45,7 @@ def multiple_results_dict():
 
 def test_search_by_abn(client, single_result_dict, requests_mock):
     requests_mock.get(
-        'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/ABRSearchByABN',
+        'https://abr.business.gov.au/ABRXMLSearchRPC/ABRXMLSearch.asmx/ABRSearchByABN',
         text=xmltodict.unparse(single_result_dict)
     )
     
@@ -59,7 +59,7 @@ def test_search_by_abn(client, single_result_dict, requests_mock):
 
 def test_search_by_abn_with_history(client, single_result_dict, requests_mock):
     requests_mock.get(
-        'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/ABRSearchByABN',
+        'https://abr.business.gov.au/ABRXMLSearchRPC/ABRXMLSearch.asmx/ABRSearchByABN',
         text=xmltodict.unparse(single_result_dict)
     )
     
@@ -71,7 +71,7 @@ def test_search_by_abn_with_history(client, single_result_dict, requests_mock):
 
 def test_search_by_asic(client, single_result_dict, requests_mock):
     requests_mock.get(
-        'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/ABRSearchByASIC',
+        'https://abr.business.gov.au/ABRXMLSearchRPC/ABRXMLSearch.asmx/ABRSearchByASIC',
         text=xmltodict.unparse(single_result_dict)
     )
     
@@ -83,7 +83,7 @@ def test_search_by_asic(client, single_result_dict, requests_mock):
 
 def test_search_by_name(client, multiple_results_dict, requests_mock):
     requests_mock.get(
-        'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/ABRSearchByNameSimpleProtocol',
+        'https://abr.business.gov.au/ABRXMLSearchRPC/ABRXMLSearch.asmx/ABRSearchByNameSimpleProtocol',
         text=xmltodict.unparse(multiple_results_dict)
     )
     
@@ -110,7 +110,7 @@ def test_search_by_abn_status(client, requests_mock):
         }
     }
     requests_mock.get(
-        'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/SearchByABNStatus',
+        'https://abr.business.gov.au/ABRXMLSearchRPC/ABRXMLSearch.asmx/SearchByABNStatus',
         text=xmltodict.unparse(mock_response)
     )
     
@@ -135,7 +135,7 @@ def test_search_by_charity(client, requests_mock):
         }
     }
     requests_mock.get(
-        'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/SearchByCharity',
+        'https://abr.business.gov.au/ABRXMLSearchRPC/ABRXMLSearch.asmx/SearchByCharity',
         text=xmltodict.unparse(mock_response)
     )
     
@@ -160,7 +160,7 @@ def test_search_by_registration_event(client, requests_mock):
         }
     }
     requests_mock.get(
-        'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/SearchByRegistrationEvent',
+        'https://abr.business.gov.au/ABRXMLSearchRPC/ABRXMLSearch.asmx/SearchByRegistrationEvent',
         text=xmltodict.unparse(mock_response)
     )
     
@@ -189,7 +189,7 @@ def test_search_by_update_event(client, requests_mock):
         }
     }
     requests_mock.get(
-        'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/SearchByUpdateEvent',
+        'https://abr.business.gov.au/ABRXMLSearchRPC/ABRXMLSearch.asmx/SearchByUpdateEvent',
         text=xmltodict.unparse(mock_response)
     )
     
@@ -217,7 +217,7 @@ def test_search_by_postcode(client, requests_mock):
         }
     }
     requests_mock.get(
-        'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/SearchByPostcode',
+        'https://abr.business.gov.au/ABRXMLSearchRPC/ABRXMLSearch.asmx/SearchByPostcode',
         text=xmltodict.unparse(mock_response)
     )
     
@@ -229,7 +229,7 @@ def test_search_by_postcode(client, requests_mock):
 
 def test_search_by_name_advanced(client, multiple_results_dict, requests_mock):
     requests_mock.get(
-        'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/ABRSearchByNameAdvancedSimpleProtocol',
+        'https://abr.business.gov.au/ABRXMLSearchRPC/ABRXMLSearch.asmx/ABRSearchByNameAdvancedSimpleProtocol',
         text=xmltodict.unparse(multiple_results_dict)
     )
     
@@ -251,7 +251,7 @@ def test_search_by_name_advanced(client, multiple_results_dict, requests_mock):
 
 def test_state_flags_generation(client, multiple_results_dict, requests_mock):
     requests_mock.get(
-        'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/ABRSearchByNameSimpleProtocol',
+        'https://abr.business.gov.au/ABRXMLSearchRPC/ABRXMLSearch.asmx/ABRSearchByNameSimpleProtocol',
         text=xmltodict.unparse(multiple_results_dict)
     )
     
@@ -265,7 +265,7 @@ def test_state_flags_generation(client, multiple_results_dict, requests_mock):
 
 def test_http_error_handling(client, requests_mock):
     requests_mock.get(
-        'https://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/ABRSearchByABN',
+        'https://abr.business.gov.au/ABRXMLSearchRPC/ABRXMLSearch.asmx/ABRSearchByABN',
         status_code=404,
         text='Not Found'
     )
