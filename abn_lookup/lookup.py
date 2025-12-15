@@ -43,8 +43,6 @@ class ABNLookupClient:
             limit
         )
 
-    # Exact-result searches ---------------------
-
     def search_by_abn(self, abn: str, includeHistoricalDetails: str = 'N') -> Generator[dict, None, None]:
         '''
         Search for an entity by ABN.
@@ -71,7 +69,70 @@ class ABNLookupClient:
             }
         )
 
-    # Multiple-result searches ------------------
+    def search_by_name(self, name: str, postcode: str = '', legalName: str = '', businessName: str = '', tradingName: str = '', state: str = '') -> Generator[dict, None, None]:
+        '''
+        Search for entities by name (simple protocol).
+        See: https://abr.business.gov.au/Documentation/WebServiceMethods#SearchbyName
+        '''
+        params = {
+            'name': name,
+            'postcode': postcode,
+            'legalName': legalName,
+            'businessName': businessName,
+            'tradingName': tradingName,
+            **self._state_flags(state)
+        }
+        yield from self._iter_search_results(
+            self._request(
+                'https://abr.business.gov.au/ABRXMLSearchRPC/ABRXMLSearch.asmx/ABRSearchByNameSimpleProtocol',
+                params,
+            ),
+            result_list_key='searchResultsList',
+            record_key='searchResultsRecord'
+        )
+
+    def search_by_name_advanced(self, name: str, postcode: str = '', legalName: str = '', businessName: str = '', tradingName: str = '', state: str = '', searchWidth: str = '', minimumScore: int = 0, maxSearchResults: int = 0, activeABNsOnly: str = '') -> Generator[dict, None, None]:
+        '''
+        Advanced search for entities by name.
+        See: https://abr.business.gov.au/Documentation/WebServiceMethods#SearchbyName
+        '''
+        params = {
+            'name': name,
+            'postcode': postcode,
+            'legalName': legalName,
+            'businessName': businessName,
+            'tradingName': tradingName,
+            'searchWidth': searchWidth,
+            'minimumScore': minimumScore if minimumScore else '',
+            'maxSearchResults': maxSearchResults if maxSearchResults else '',
+            'activeABNsOnly': activeABNsOnly,
+            **self._state_flags(state)
+        }
+        yield from self._iter_search_results(
+            self._request(
+                'https://abr.business.gov.au/ABRXMLSearchRPC/ABRXMLSearch.asmx/ABRSearchByNameAdvancedSimpleProtocol',
+                params,
+            ),
+            result_list_key='searchResultsList',
+            record_key='searchResultsRecord'
+        )
+
+    def search_by_postcode(self, postcode: str) -> Generator[dict, None, None]:
+        '''
+        Search for entities by postcode.
+        See: https://abr.business.gov.au/Documentation/WebServiceMethods#SearchwithFilters
+        '''
+        params = {
+            'postcode': postcode,
+        }
+        yield from self._iter_search_results(
+            self._request(
+                'https://abr.business.gov.au/ABRXMLSearchRPC/ABRXMLSearch.asmx/SearchByPostcode',
+                params,
+            ),
+            result_list_key='abnList',
+            record_key='abn'
+        )
 
     def search_by_abn_status(self, postcode: str = '', activeABNsOnly: str = '', currentGSTRegistrationOnly: str = '', entityTypeCode: str = '') -> Generator[dict, None, None]:
         '''
@@ -93,20 +154,20 @@ class ABNLookupClient:
             record_key='abn'
         )
 
-    def search_by_charity(self, postcode: str = '', state: str = '', charityTypeCode: str = '', concessionTypeCode: str = '') -> Generator[dict, None, None]:
+    def search_by_update_event(self, updatedate: str, postcode: str = '', state: str = '', entityTypeCode: str = '') -> Generator[dict, None, None]:
         '''
-        Search for charities.
+        Search for entities by update event.
         See: https://abr.business.gov.au/Documentation/WebServiceMethods#SearchwithFilters
         '''
         params = {
             'postcode': postcode,
             'state': state,
-            'charityTypeCode': charityTypeCode,
-            'concessionTypeCode': concessionTypeCode,
+            'entityTypeCode': entityTypeCode,
+            'updatedate': updatedate,
         }
         yield from self._iter_search_results(
             self._request(
-                'https://abr.business.gov.au/ABRXMLSearchRPC/ABRXMLSearch.asmx/SearchByCharity',
+                'https://abr.business.gov.au/ABRXMLSearchRPC/ABRXMLSearch.asmx/SearchByUpdateEvent',
                 params,
             ),
             result_list_key='abnList',
@@ -134,89 +195,24 @@ class ABNLookupClient:
             record_key='abn'
         )
 
-    def search_by_update_event(self, updatedate: str, postcode: str = '', state: str = '', entityTypeCode: str = '') -> Generator[dict, None, None]:
+    def search_by_charity(self, postcode: str = '', state: str = '', charityTypeCode: str = '', concessionTypeCode: str = '') -> Generator[dict, None, None]:
         '''
-        Search for entities by update event.
+        Search for charities.
         See: https://abr.business.gov.au/Documentation/WebServiceMethods#SearchwithFilters
         '''
         params = {
             'postcode': postcode,
             'state': state,
-            'entityTypeCode': entityTypeCode,
-            'updatedate': updatedate,
+            'charityTypeCode': charityTypeCode,
+            'concessionTypeCode': concessionTypeCode,
         }
         yield from self._iter_search_results(
             self._request(
-                'https://abr.business.gov.au/ABRXMLSearchRPC/ABRXMLSearch.asmx/SearchByUpdateEvent',
+                'https://abr.business.gov.au/ABRXMLSearchRPC/ABRXMLSearch.asmx/SearchByCharity',
                 params,
             ),
             result_list_key='abnList',
             record_key='abn'
-        )
-
-    def search_by_name(self, name: str, postcode: str = '', legalName: str = '', businessName: str = '', tradingName: str = '', state: str = '') -> Generator[dict, None, None]:
-        '''
-        Search for entities by name (simple protocol).
-        See: https://abr.business.gov.au/Documentation/WebServiceMethods#SearchbyName
-        '''
-        params = {
-            'name': name,
-            'postcode': postcode,
-            'legalName': legalName,
-            'businessName': businessName,
-            'tradingName': tradingName,
-            **self._state_flags(state)
-        }
-        yield from self._iter_search_results(
-            self._request(
-                'https://abr.business.gov.au/ABRXMLSearchRPC/ABRXMLSearch.asmx/ABRSearchByNameSimpleProtocol',
-                params,
-            ),
-            result_list_key='searchResultsList',
-            record_key='searchResultsRecord'
-        )
-
-    def search_by_postcode(self, postcode: str) -> Generator[dict, None, None]:
-        '''
-        Search for entities by postcode.
-        See: https://abr.business.gov.au/Documentation/WebServiceMethods#SearchwithFilters
-        '''
-        params = {
-            'postcode': postcode,
-        }
-        yield from self._iter_search_results(
-            self._request(
-                'https://abr.business.gov.au/ABRXMLSearchRPC/ABRXMLSearch.asmx/SearchByPostcode',
-                params,
-            ),
-            result_list_key='abnList',
-            record_key='abn'
-        )
-
-    def search_by_name_advanced(self, name: str, postcode: str = '', legalName: str = '', businessName: str = '', tradingName: str = '', state: str = '', searchWidth: str = '', minimumScore: int = 0, maxSearchResults: int = 0, activeABNsOnly: str = '') -> Generator[dict, None, None]:
-        '''
-        Advanced search for entities by name.
-        See: https://abr.business.gov.au/Documentation/WebServiceMethods#SearchbyName
-        '''
-        params = {
-            'name': name,
-            'postcode': postcode,
-            'legalName': legalName,
-            'businessName': businessName,
-            'tradingName': tradingName,
-            'searchWidth': searchWidth,
-            'minimumScore': minimumScore if minimumScore else '',
-            'maxSearchResults': maxSearchResults if maxSearchResults else '',
-            'activeABNsOnly': activeABNsOnly,
-            **self._state_flags(state)
-        }
-        yield from self._iter_search_results(
-            self._request(
-                'https://abr.business.gov.au/ABRXMLSearchRPC/ABRXMLSearch.asmx/ABRSearchByNameAdvancedSimpleProtocol',
-                params,
-            ),
-            result_list_key='searchResultsList',
-            record_key='searchResultsRecord'
         )
 
 
@@ -255,7 +251,6 @@ def parse_args():
     parser_postcode.add_argument('--postcode', type=str, required=True, help='Postcode to search for')
 
     # search_by_abn_status
-    # ?postcode=string&activeABNsOnly=string&currentGSTRegistrationOnly=string&entityTypeCode=string
     parser_abn_status = subparsers.add_parser('abn-status', help='Search by ABN status')
     parser_abn_status.add_argument('--postcode', type=str, default='', help='Postcode (optional)')
     parser_abn_status.add_argument('--activeABNsOnly', type=str, default='', help='Active ABNs only (optional)')
