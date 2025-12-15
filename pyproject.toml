@@ -12,6 +12,13 @@ dependencies = [
     "pp @ git+https://github.com/tmck-code/pp@v0.2.2",
 ]
 
+[dependency-groups]
+tests = [
+    "pytest>=8.0.0",
+    "pytest-mock>=3.12.0",
+    "requests-mock>=1.11.0",
+]
+
 [project.urls]
 Homepage = "https://github.com/tmck-code/abn-lookup"
 Issues = "https://github.com/tmck-code/abn-lookup/issues"
