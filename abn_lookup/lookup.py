@@ -10,7 +10,7 @@ import requests
 
 import xmltodict
 
-from pp import pp
+from pprint_ndjson import pp
 
 STATES = ['NSW', 'ACT', 'VIC', 'QLD', 'SA', 'WA', 'TAS', 'NT']
 DEBUG = os.environ.get('DEBUG', '0') == '1'

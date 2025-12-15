@@ -10,7 +10,7 @@ requires-python = ">=3.13.1"
 dependencies = [
     "requests>=2.31.0",
     "xmltodict>=0.13.0",
-    "pp @ git+https://github.com/tmck-code/pp@v0.2.2",
+    "pprint-ndjson>=0.2.4",
 ]
 
 [dependency-groups]
