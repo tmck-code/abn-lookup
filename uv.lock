@@ -7,7 +7,7 @@ name = "abn-lookup"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
-    { name = "pp" },
+    { name = "pprint-ndjson" },
     { name = "requests" },
     { name = "xmltodict" },
 ]
@@ -21,7 +21,7 @@ tests = [
 
 [package.metadata]
 requires-dist = [
-    { name = "pp", git = "https://github.com/tmck-code/pp?rev=v0.2.2" },
+    { name = "pprint-ndjson", git = "https://github.com/tmck-code/pprint-ndjson?rev=v0.2.4" },
     { name = "requests", specifier = ">=2.31.0" },
     { name = "xmltodict", specifier = ">=0.13.0" },
 ]
@@ -129,9 +129,9 @@ wheels = [
 ]
 
 [[package]]
-name = "pp"
-version = "0.0.1"
-source = { git = "https://github.com/tmck-code/pp?rev=v0.2.2#c895be3aca8c805b2410ae52e4d33b3bf370a0ee" }
+name = "pprint-ndjson"
+version = "0.2.4"
+source = { git = "https://github.com/tmck-code/pprint-ndjson?rev=v0.2.4#cb3222452bf1643e80a0f979e10f32a05462e012" }
 
 [[package]]
 name = "pygments"
