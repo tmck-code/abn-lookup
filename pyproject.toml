@@ -6,6 +6,7 @@ authors = [{name = "Tom McKeesick", email = "tmck01@gmail.com"}]
 license = "BSD-3-Clause"
 readme = "README.md"
 requires-python = ">=3.13.1"
+
 dependencies = [
     "requests>=2.31.0",
     "xmltodict>=0.13.0",
@@ -18,6 +19,9 @@ tests = [
     "pytest-mock>=3.12.0",
     "requests-mock>=1.11.0",
 ]
+
+[project.scripts]
+abn-lookup = "abn_lookup.lookup:main"
 
 [project.urls]
 Homepage = "https://github.com/tmck-code/abn-lookup"
