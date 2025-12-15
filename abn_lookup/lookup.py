@@ -56,7 +56,7 @@ def main():
     for i, r in enumerate(result['ABRPayloadSearchResults']['response']['searchResultsList']['searchResultsRecord']):
         if i >= args['limit']:
             break
-        pp.ppd({'result': r}, indent=None, style=None)
+        pp.ppd(r, indent=None, style=None)
 
 if __name__ == '__main__':
     main()
