@@ -1,11 +1,11 @@
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/tmck-code/abn-lookup/test.yml)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/tmck-code/abn-lookup-service/test.yml)
 
-# abn-lookup
+# abn-lookup-service
 A python client to interact with ABN Lookup services
 
 This library provides a Python interface to the [Australian Business Register (ABR) XML Search API](https://abr.business.gov.au/Documentation/WebServiceMethods). All API methods are based on the official ABR documentation.
 
-- [abn-lookup](#abn-lookup)
+- [abn-lookup-service](#abn-lookup-service)
   - [Installation](#installation)
   - [Authentication](#authentication)
     - [CLI](#cli)
@@ -32,7 +32,7 @@ This library provides a Python interface to the [Australian Business Register (A
 ## Installation
 
 ```bash
-python3 -m pip install 'abn-lookup @ git+https://github.com/tmck-code/abn-lookup'
+python3 -m pip install 'abn-lookup-service @ git+https://github.com/tmck-code/abn-lookup-service'
 ```
 
 ## Authentication
@@ -49,22 +49,22 @@ The package includes a command-line interface:
 
 ```bash
 # Search by ABN
-abn-lookup abn --abn 53004085616
+abn-lookup-service abn --abn 53004085616
 
 # Search by name
-abn-lookup name --name "Telstra" --state "VIC" --limit 5
+abn-lookup-service name --name "Telstra" --state "VIC" --limit 5
 
 # Search by postcode
-abn-lookup postcode --postcode "3000" --state "VIC"
+abn-lookup-service postcode --postcode "3000" --state "VIC"
 
 # Advanced name search
-abn-lookup name-advanced --name "Commonwealth Bank" --state "NSW" --legalName "Y"
+abn-lookup-service name-advanced --name "Commonwealth Bank" --state "NSW" --legalName "Y"
 ```
 
 Run with `--help` to see all available commands and options:
 
 ```bash
-abn-lookup --help
+abn-lookup-service --help
 ```
 <details>
 <summary><i>Example help output</i></summary>
@@ -93,7 +93,7 @@ options:
 </details>
 
 ```bash
-abn-lookup name --help
+abn-lookup-service name --help
 ```
 
 <details>
@@ -119,7 +119,7 @@ options:
 #### Basic Example
 
 ```python
-from abn_lookup.lookup import ABNLookupClient
+from abn_lookup_service.lookup import ABNLookupClient
 import os
 
 # Initialize the client
@@ -140,7 +140,7 @@ for result in client.search_by_name(name='Telstra', state='VIC'):
 #### Advanced Example
 
 ```python
-from abn_lookup.lookup import ABNLookupClient
+from abn_lookup_service.lookup import ABNLookupClient
 import os
 
 client = ABNLookupClient(authentication_guid=os.environ['ABN_LOOKUP_GUID'])
@@ -263,7 +263,7 @@ for result in results:
 Build the docker image
 
 ```shell
- docker build -f test/Dockerfile -t abn-lookup .
+ docker build -f test/Dockerfile -t abn-lookup-service .
 ```
 
 Run the tests with
@@ -272,7 +272,7 @@ Run the tests with
 docker run \
     -it \
     -v "$PWD":/app \
-    abn-lookup:latest \
+    abn-lookup-service:latest \
     bash -c 'pytest -vv test'
 ```
 

@@ -4,7 +4,7 @@ import pytest
 import requests
 import xmltodict
 
-from abn_lookup.lookup import ABNLookupClient
+from abn_lookup_service.lookup import ABNLookupClient
 
 
 @pytest.fixture

@@ -13,6 +13,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
     - name: Pull image from ghcr.io
-      run: docker pull ghcr.io/tmck-code/abn-lookup:latest
+      run: docker pull ghcr.io/tmck-code/abn-lookup-service:latest
     - name: Run tests
-      run: docker run --rm -v "$PWD/test":/app/test ghcr.io/tmck-code/abn-lookup:latest pytest -vv test/
+      run: docker run --rm -v "$PWD/test":/app/test ghcr.io/tmck-code/abn-lookup-service:latest pytest -vv test/

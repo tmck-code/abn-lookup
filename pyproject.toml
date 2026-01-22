@@ -1,5 +1,5 @@
 [project]
-name = "abn-lookup"
+name = "abn-lookup-service"
 version = "0.1.1"
 description = "A python client to interact with ABN Lookup services"
 authors = [{name = "Tom McKeesick", email = "tmck01@gmail.com"}]
@@ -21,14 +21,14 @@ tests = [
 ]
 
 [project.scripts]
-abn-lookup = "abn_lookup.lookup:main"
+abn-lookup-service = "abn_lookup_service.lookup:main"
 
 [project.urls]
-Homepage = "https://github.com/tmck-code/abn-lookup"
-Issues = "https://github.com/tmck-code/abn-lookup/issues"
+Homepage = "https://github.com/tmck-code/abn-lookup-service"
+Issues = "https://github.com/tmck-code/abn-lookup-service/issues"
 
 [tool.mypy]
 python_version = "3.13"
 warn_return_any = true
 check_untyped_defs = true
-files = ["abn_lookup/"]
+files = ["abn_lookup_service/"]
