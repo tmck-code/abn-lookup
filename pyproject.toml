@@ -1,6 +1,6 @@
 [project]
 name = "abn-lookup"
-version = "0.1.0"
+version = "0.1.1"
 description = "A python client to interact with ABN Lookup services"
 authors = [{name = "Tom McKeesick", email = "tmck01@gmail.com"}]
 license = "BSD-3-Clause"
