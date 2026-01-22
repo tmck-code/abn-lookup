@@ -10,7 +10,7 @@ requires-python = ">=3.13.1"
 dependencies = [
     "requests>=2.31.0",
     "xmltodict>=0.13.0",
-    "pprint-ndjson @ git+https://github.com/tmck-code/pprint-ndjson@v0.2.4",
+    "laser-prynter>=0.2.5",
 ]
 
 [dependency-groups]
