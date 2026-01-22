@@ -1,3 +1,5 @@
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/tmck-code/abn-lookup/test.yml)
+
 # abn-lookup
 A python client to interact with ABN Lookup services
 
