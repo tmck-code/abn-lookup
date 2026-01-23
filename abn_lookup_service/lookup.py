@@ -13,7 +13,7 @@ import xmltodict
 from laser_prynter import pp
 
 STATES = ['NSW', 'ACT', 'VIC', 'QLD', 'SA', 'WA', 'TAS', 'NT']
-DEBUG = os.environ.get('DEBUG', '0') == '1'
+pp.enabled = os.environ.get('DEBUG', '0') == '1'
 
 @dataclass
 class ABNLookupClient:
@@ -21,15 +21,17 @@ class ABNLookupClient:
 
     def _request(self, url: str, params: dict) -> dict:
         'Internal method to perform a GET request to the ABR XML Search API. Converts XML response to dict.'
-        if DEBUG:
-            pp.ppd({'url': url, 'params': params}, style=None)
+
+        pp.ppd({'url': url, 'params': params}, style=None)
+
         response = requests.get(url, params=params | {'authenticationGuid': self.authentication_guid})
         response.raise_for_status()
-        if DEBUG:
-            pp.ppd({'response': {'status_code': response.status_code, 'text': response.text}}, style=None)
+
+        pp.ppd({'response': {'status_code': response.status_code, 'text': response.text}}, style=None)
+
         parsed = xmltodict.parse(response.text)
-        if DEBUG:
-            pp.ppd({'parsed': parsed}, style=None)
+        pp.ppd({'parsed': parsed}, style=None)
+
         return parsed
 
     def _state_flags(self, state: str) -> dict:
@@ -314,7 +316,7 @@ def main():
     for i, record in enumerate(results):
         if limit and i >= limit:
             break
-        pp.ppd(record, indent=None, style=None)
+        pp.ppd(record, style=None)
 
 if __name__ == '__main__':
     main()
